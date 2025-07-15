@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Subtitle Editor</title>
+    <!-- CRITICAL: DO NOT REMOVE/MODIFY THIS COMMENT OR THE SCRIPT BELOW -->
+    <script src="https://blink.new/auto-engineer.js?projectId=audio-subtitle-editor-r9yzgct4" type="module"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- MetaMask error suppression - Load before any other scripts -->
+    <script>
+      // Early MetaMask error suppression
+      (function() {
+        const isMetaMaskError = (error) => {
+          if (!error) return false
+          const errorMessage = error.message || error.reason?.message || String(error)
+          const keywords = ['metamask', 'MetaMask', 'metamask_getProviderState', 'ethereum', 'web3', 'provider']
+          return keywords.some(keyword => errorMessage.toLowerCase().includes(keyword.toLowerCase()))
+        }
+
+        // Suppress MetaMask errors globally
+        window.addEventListener('error', (event) => {
+          if (isMetaMaskError(event.error)) {
+            event.preventDefault()
+            return false
+          }
+        }, true) // Use capture phase
+
+        window.addEventListener('unhandledrejection', (event) => {
+          if (isMetaMaskError(event.reason)) {
+            event.preventDefault()
+            return false
+          }
+        }, true) // Use capture phase
+
+        // Override console methods to filter MetaMask noise
+        const originalError = console.error
+        const originalWarn = console.warn
+        
+        console.error = (...args) => {
+          const message = args.join(' ')
+          if (isMetaMaskError({ message })) return
+          originalError.apply(console, args)
+        }
+        
+        console.warn = (...args) => {
+          const message = args.join(' ')
+          if (isMetaMaskError({ message })) return
+          originalWarn.apply(console, args)
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
